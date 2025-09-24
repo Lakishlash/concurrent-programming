@@ -1,0 +1,8 @@
+[pt2pt] rank 0/4 sent message to ranks 1..3 tag=9 repeat=2
+Done.
+[pt2pt] rank 1/4 received: PT2PT over two nodes
+[pt2pt] rank 1/4 received: PT2PT over two nodes
+[pt2pt] rank 2/4 received: PT2PT over two nodes
+[pt2pt] rank 2/4 received: PT2PT over two nodes
+[pt2pt] rank 3/4 received: PT2PT over two nodes
+[pt2pt] rank 3/4 received: PT2PT over two nodes

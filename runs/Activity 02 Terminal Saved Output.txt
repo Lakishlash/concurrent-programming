@@ -1,0 +1,198 @@
+Last login: Wed Sep 24 22:12:01 on ttys001
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % export NODE1=192.168.4.39
+export NODE2=192.168.4.40
+echo "NODE1=$NODE1  NODE2=$NODE2"
+
+NODE1=192.168.4.39  NODE2=192.168.4.40
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % >....                                                                                                                                                         
+            }
+        }
+
+        // Compute
+        for (int r = 0; r < args.repeat; ++r) {
+            for (int i = 0; i < local_n; ++i) c_local[i] = a_local[i] + b_local[i];
+        }
+
+        // Gather manually to root
+        if (rank == 0) {
+            C.assign(args.n, 0);
+            std::copy(c_local.begin(), c_local.end(), C.begin() + displs[0]);
+            for (int r = 1; r < world; ++r) {
+                int cnt = 0;
+                MPI_Recv(&cnt, 1, MPI_INT, r, 3, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                if (cnt > 0) {
+                    MPI_Recv(C.data() + displs[r], cnt, MPI_INT, r, 4, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                }
+            }
+        } else {
+            MPI_Send(&local_n, 1, MPI_INT, 0, 3, MPI_COMM_WORLD);
+            if (local_n > 0) {
+                MPI_Send(c_local.data(), local_n, MPI_INT, 0, 4, MPI_COMM_WORLD);
+            }
+        }
+
+        t1 = MPI_Wtime();
+        if (rank == 0) {
+            std::cout << "[pt2pt] n=" << args.n
+                      << " world=" << world
+                      << " repeat=" << args.repeat
+                      << " time_s=" << std::fixed << std::setprecision(6) << (t1 - t0)
+                      << "\n";
+        }
+    } else {
+        if (rank == 0) std::cerr << "Error: --mode must be 'scatter' or 'pt2pt'\n";
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
+
+    // Optional verification on root
+    if (args.check && rank == 0) {
+        std::size_t mism = 0;
+        for (std::int64_t i = 0; i < args.n; ++i) {
+            int expect = A[i] + B[i];
+            if (C[i] != expect) { ++mism; if (mism < 5) {
+                std::cerr << "[mismatch] i=" << i << " got=" << C[i] << " expect=" << expect << "\n";
+            }}
+        }
+        std::cout << "[check] mismatches=" << mism << "\n";
+        if (args.print_k > 0) {
+            print_sample(A, B, C, args.print_k);
+        }
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (rank == 0) std::cout << "Done.\n";
+    MPI_Finalize();
+    return 0;
+}
+EOF
+
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ls -lh ~/Documents/Projects/hellompiv2/src/mpi_vecadd.cpp
+
+-rw-r--r--  1 lakishwijewardene  staff   8.7K 24 Sep 22:27 /Users/lakishwijewardene/Documents/Projects/hellompiv2/src/mpi_vecadd.cpp
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ssh cdp@$NODE1 "mkdir -p ~/hellompiv2/src ~/hellompiv2/build"
+scp ~/Documents/Projects/hellompiv2/src/mpi_vecadd.cpp cdp@$NODE1:~/hellompiv2/src/
+
+cdp@192.168.4.39's password: 
+cdp@192.168.4.39's password: 
+mpi_vecadd.cpp                                                                                                                                                               100% 8874     6.8MB/s   00:00    
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ssh cdp@$NODE1 "cd ~/hellompiv2 && \
+  mpic++ -O2 -std=c++17 src/mpi_vecadd.cpp -o build/mpi_vecadd -Wall -Wextra -Wpedantic; \
+  file build/mpi_vecadd; \
+  ls -lh build/mpi_vecadd"
+
+cdp@192.168.4.39's password: 
+In file included from /usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/mpicxx.h:277,
+                 from /usr/lib/aarch64-linux-gnu/openmpi/include/mpi.h:2911,
+                 from src/mpi_vecadd.cpp:20:
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h: In member function ‘virtual void MPI::Op::Init(void (*)(const void*, void*, int, const MPI::Datatype&), bool)’:
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h:121:25: warning: cast between incompatible function types from ‘void (*)(void*, void*, int*, ompi_datatype_t**, void (*)(void*, void*, int*, ompi_datatype_t**))’ to ‘void (*)(void*, void*, int*, ompi_datatype_t**)’ [-Wcast-function-type]
+  121 |     (void)MPI_Op_create((MPI_User_function*) ompi_mpi_cxx_op_intercept,
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h:123:38: warning: cast between incompatible function types from ‘void (*)(const void*, void*, int, const MPI::Datatype&)’ to ‘void (*)(void*, void*, int*, ompi_datatype_t**)’ [-Wcast-function-type]
+  123 |     ompi_op_set_cxx_callback(mpi_op, (MPI_User_function*) func);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+build/mpi_vecadd: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=d4ce5930ddfa5f243027d5f4fcca5b809f928f8d, for GNU/Linux 3.7.0, not stripped
+-rwxrwxr-x 1 cdp cdp 164K Sep 24 12:32 build/mpi_vecadd
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ssh cdp@$NODE1 "cd ~/hellompiv2 && mpirun -np 1 ./build/mpi_vecadd --mode=scatter --n=16 --check=1 --print=5"
+
+cdp@192.168.4.39's password: 
+[scatter] n=16 world=1 repeat=1 time_s=0.000002
+[check] mismatches=0
+C[0] = A[0] + B[0] -> 69 + 71 = 140
+C[1] = A[1] + B[1] -> 28 + 42 = 70
+C[2] = A[2] + B[2] -> 22 + 69 = 91
+C[3] = A[3] + B[3] -> 55 + 71 = 126
+C[4] = A[4] + B[4] -> 71 + 49 = 120
+Done.
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ssh cdp@$NODE1 "cd ~/hellompiv2 && mpirun -np 1 ./build/mpi_vecadd --mode=pt2pt --n=16 --check=1 --print=5"
+
+cdp@192.168.4.39's password: 
+[pt2pt] n=16 world=1 repeat=1 time_s=0.000000
+[check] mismatches=0
+C[0] = A[0] + B[0] -> 69 + 71 = 140
+C[1] = A[1] + B[1] -> 28 + 42 = 70
+C[2] = A[2] + B[2] -> 22 + 69 = 91
+C[3] = A[3] + B[3] -> 55 + 71 = 126
+C[4] = A[4] + B[4] -> 71 + 49 = 120
+Done.
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ssh cdp@$NODE2 "mkdir -p ~/hellompiv2/build"
+
+cdp@192.168.4.40's password: 
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % scp -3 cdp@$NODE1:~/hellompiv2/build/mpi_vecadd \
+        cdp@$NODE2:~/hellompiv2/build/mpi_vecadd
+
+cdp@192.168.4.40's password: 
+cdp@192.168.4.39's password: 
+mpi_vecadd                                                                                                                                                                   100%  163KB  35.9MB/s   00:00    
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ssh cdp@$NODE2 "file ~/hellompiv2/build/mpi_vecadd && \
+                ls -lh ~/hellompiv2/build/mpi_vecadd"
+
+cdp@192.168.4.40's password: 
+/home/cdp/hellompiv2/build/mpi_vecadd: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=d4ce5930ddfa5f243027d5f4fcca5b809f928f8d, for GNU/Linux 3.7.0, not stripped
+-rwxrwxr-x 1 cdp cdp 164K Sep 24 12:39 /home/cdp/hellompiv2/build/mpi_vecadd
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ssh cdp@$NODE1 '
+  cd ~/hellompiv2 && mkdir -p runs
+  # Scatter/Gather (with placement map)
+  mpirun --hostfile hostfile --display-map -np 4 \
+    ./build/mpi_vecadd --mode=scatter --n=200000 --check=1 --print=5 \
+    | tee runs/a02_scatter_np4.txt
+
+  # Manual point-to-point
+  mpirun --hostfile hostfile -np 4 \
+    ./build/mpi_vecadd --mode=pt2pt   --n=200000 --check=1 --print=5 \
+    | tee runs/a02_pt2pt_np4.txt
+'
+
+cdp@192.168.4.39's password: 
+ Data for JOB [19623,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 0 Bound: UNBOUND
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 1 Bound: UNBOUND
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 2 Bound: N/A
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 3 Bound: N/A
+
+ =============================================================
+ Data for JOB [19623,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 0 Bound: N/A
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 1 Bound: N/A
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 2 Bound: UNBOUND
+ 	Process OMPI jobid: [19623,1] App: 0 Process rank: 3 Bound: UNBOUND
+
+ =============================================================
+[scatter] n=200000 world=4 repeat=1 time_s=0.040232
+[check] mismatches=0
+C[0] = A[0] + B[0] -> 69 + 71 = 140
+C[1] = A[1] + B[1] -> 28 + 42 = 70
+C[2] = A[2] + B[2] -> 22 + 69 = 91
+C[3] = A[3] + B[3] -> 55 + 71 = 126
+C[4] = A[4] + B[4] -> 71 + 49 = 120
+Done.
+[pt2pt] n=200000 world=4 repeat=1 time_s=0.042315
+[check] mismatches=0
+C[0] = A[0] + B[0] -> 69 + 71 = 140
+C[1] = A[1] + B[1] -> 28 + 42 = 70
+C[2] = A[2] + B[2] -> 22 + 69 = 91
+C[3] = A[3] + B[3] -> 55 + 71 = 126
+C[4] = A[4] + B[4] -> 71 + 49 = 120
+Done.
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % scp 'cdp@'"$NODE1"':~/hellompiv2/runs/a02_*_np4.txt' ~/Desktop/
+
+cdp@192.168.4.39's password: 
+a02_pt2pt_np4.txt                                                                                                                                                            100%  255   358.8KB/s   00:00    
+a02_scatter_np4.txt                                                                                                                                                          100% 1433     1.9MB/s   00:00    
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % ls -lh ~/Desktop/a02_*_np4.txt
+
+-rw-r--r--@ 1 lakishwijewardene  staff   255B 24 Sep 22:45 /Users/lakishwijewardene/Desktop/a02_pt2pt_np4.txt
+-rw-r--r--@ 1 lakishwijewardene  staff   1.4K 24 Sep 22:45 /Users/lakishwijewardene/Desktop/a02_scatter_np4.txt
+(base) lakishwijewardene@Lakishs-MacBook-Air ~ % 

@@ -1,0 +1,407 @@
+Last login: Tue Sep 23 21:52:16 on ttys015
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % export NODE1=192.168.4.39
+export NODE2=192.168.4.40
+echo "NODE1=$NODE1  NODE2=$NODE2"
+NODE1=192.168.4.39  NODE2=192.168.4.40
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "ping -c 2 $NODE2"
+ssh cdp@$NODE2 "ping -c 2 $NODE1"
+The authenticity of host '192.168.4.39 (192.168.4.39)' can't be established.
+ED25519 key fingerprint is SHA256:gEOABZWM8TUBA1/w0Ce+LLZFPtwxAnuh8zxt7Ac9gGw.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:1: 192.168.64.2
+    ~/.ssh/known_hosts:4: 192.168.64.3
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.4.39' (ED25519) to the list of known hosts.
+cdp@192.168.4.39's password: 
+PING 192.168.4.40 (192.168.4.40) 56(84) bytes of data.
+64 bytes from 192.168.4.40: icmp_seq=1 ttl=64 time=0.809 ms
+64 bytes from 192.168.4.40: icmp_seq=2 ttl=64 time=1.71 ms
+
+--- 192.168.4.40 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1040ms
+rtt min/avg/max/mdev = 0.809/1.260/1.712/0.451 ms
+The authenticity of host '192.168.4.40 (192.168.4.40)' can't be established.
+ED25519 key fingerprint is SHA256:gEOABZWM8TUBA1/w0Ce+LLZFPtwxAnuh8zxt7Ac9gGw.
+This host key is known by the following other names/addresses:
+    ~/.ssh/known_hosts:1: 192.168.64.2
+    ~/.ssh/known_hosts:4: 192.168.64.3
+    ~/.ssh/known_hosts:5: 192.168.4.39
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.4.40' (ED25519) to the list of known hosts.
+cdp@192.168.4.40's password: 
+PING 192.168.4.39 (192.168.4.39) 56(84) bytes of data.
+64 bytes from 192.168.4.39: icmp_seq=1 ttl=64 time=0.414 ms
+64 bytes from 192.168.4.39: icmp_seq=2 ttl=64 time=1.44 ms
+
+--- 192.168.4.39 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1059ms
+rtt min/avg/max/mdev = 0.414/0.929/1.444/0.515 ms
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 '
+  test -f ~/.ssh/id_ed25519.pub || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
+'
+ssh cdp@$NODE1 "ssh-copy-id -i ~/.ssh/id_ed25519.pub cdp@$NODE2" \
+  || ssh cdp@$NODE1 "pub=\$(cat ~/.ssh/id_ed25519.pub); ssh cdp@$NODE2 \"mkdir -p ~/.ssh && chmod 700 ~/.ssh && echo \$pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys\""
+
+cdp@192.168.4.39's password: 
+Generating public/private ed25519 key pair.
+Your identification has been saved in /home/cdp/.ssh/id_ed25519
+Your public key has been saved in /home/cdp/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:L+U7KnjdBvZ+mfBpyUDkNeETtuZ1apjzRtEVod610FQ cdp@node1
+The key's randomart image is:
++--[ED25519 256]--+
+|            +. +E|
+|          .ooo+..|
+|         o .=+o.+|
+|          oo.=o+o|
+|        S.. =.+o |
+|        o+o  =   |
+|     . o.+o= =o  |
+|    . o ..=.X.   |
+|     . ..+o+     |
++----[SHA256]-----+
+cdp@192.168.4.39's password: 
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/cdp/.ssh/id_ed25519.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+
+/usr/bin/ssh-copy-id: ERROR: Host key verification failed.
+
+cdp@192.168.4.39's password: 
+Host key verification failed.
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "ssh-keygen -R $NODE2 2>/dev/null; mkdir -p ~/.ssh; touch ~/.ssh/known_hosts; ssh-keyscan -H $NODE2 >> ~/.ssh/known_hosts"
+cdp@192.168.4.39's password: 
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 'test -f ~/.ssh/id_ed25519.pub || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519'
+ssh cdp@$NODE1 "ssh-copy-id -i ~/.ssh/id_ed25519.pub cdp@$NODE2"
+cdp@192.168.4.39's password: 
+cdp@192.168.4.39's password: 
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/cdp/.ssh/id_ed25519.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+Permission denied, please try again.
+Permission denied, please try again.
+cdp@192.168.4.40: Permission denied (publickey,password).
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 'test -f ~/.ssh/id_ed25519.pub || ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519'
+ssh cdp@$NODE1 'cat ~/.ssh/id_ed25519.pub' > /tmp/node1_id_ed25519.pub
+wc -c /tmp/node1_id_ed25519.pub    # should be ~100–500 bytes
+
+cdp@192.168.4.39's password: 
+cdp@192.168.4.39's password: 
+      91 /tmp/node1_id_ed25519.pub
+wc: #: open: No such file or directory
+wc: should: open: No such file or directory
+wc: be: open: No such file or directory
+wc: ~100–500: open: No such file or directory
+wc: bytes: open: No such file or directory
+      91 total
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE2 'mkdir -p ~/.ssh && chmod 700 ~/.ssh'
+cat /tmp/node1_id_ed25519.pub | ssh cdp@$NODE2 'cat >> ~/.ssh/authorized_keys'
+ssh cdp@$NODE2 'chmod 600 ~/.ssh/authorized_keys'
+
+cdp@192.168.4.40's password: 
+cdp@192.168.4.40's password: 
+cdp@192.168.4.40's password: 
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "ssh-keygen -R $NODE2 2>/dev/null; ssh-keyscan -H $NODE2 >> ~/.ssh/known_hosts"
+
+cdp@192.168.4.39's password: 
+# Host 192.168.4.40 found: line 1
+# Host 192.168.4.40 found: line 2
+# Host 192.168.4.40 found: line 3
+/home/cdp/.ssh/known_hosts updated.
+Original contents retained as /home/cdp/.ssh/known_hosts.old
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+# 192.168.4.40:22 SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "ssh -o PasswordAuthentication=no cdp@$NODE2 hostname"
+
+cdp@192.168.4.39's password: 
+node2
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % # copies your whole project folder to node1's home dir
+scp -r "/Users/lakishwijewardene/Documents/Projects/hellompiv2" cdp@$NODE1:~
+
+quote> ssh cdp@$NODE1 '
+  set -e
+  cd ~/hellompiv2
+  mkdir -p build
+  mpic++ -O2 -std=c++17 src/mpi_comm.cpp -o build/mpi_comm -Wall -Wextra -Wpedantic
+  file build/mpi_comm
+  ls -lh build/mpi_comm
+'
+
+quote> 
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % scp -r "/Users/lakishwijewardene/Documents/Projects/hellompiv2" cdp@$NODE1:~
+
+cdp@192.168.4.39's password: 
+mpi_comm                                                                                                                                                                       0%    0     0.0KB/s   --:-- ETAscp: read local "/Users/lakishwijewardene/Documents/Projects/hellompiv2/build/mpi_comm": Operation canceled
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "set -e; cd ~/hellompiv2; mkdir -p build; mpic++ -O2 -std=c++17 src/mpi_comm.cpp -o build/mpi_comm -Wall -Wextra -WPedantic; file build/mpi_comm; ls -lh build/mpi_comm"
+
+cdp@192.168.4.39's password: 
+g++: error: unrecognized command-line option ‘-WPedantic’; did you mean ‘-Wpedantic’?
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "mkdir -p ~/hellompiv2/src ~/hellompiv2/build"
+scp "/Users/lakishwijewardene/Documents/Projects/hellompiv2/src/mpi_comm.cpp" cdp@$NODE1:~/hellompiv2/src/
+
+cdp@192.168.4.39's password: 
+cdp@192.168.4.39's password: 
+mpi_comm.cpp                                                                                                                                                                   0%    0     0.0KB/s   --:-- ETAscp: read local "/Users/lakishwijewardene/Documents/Projects/hellompiv2/src/mpi_comm.cpp": Operation canceled
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "set -e; cd ~/hellompiv2; mpic++ -O2 -std=c++17 src/mpi_comm.cpp -o build/mpi_comm -Wall -Wextra -Wpedantic; file build/mpi_comm; ls -lh build/mpi_comm"
+
+cdp@192.168.4.39's password: 
+/usr/bin/ld: /usr/lib/gcc/aarch64-linux-gnu/13/../../../aarch64-linux-gnu/Scrt1.o: in function `_start':
+(.text+0x1c): undefined reference to `main'
+/usr/bin/ld: (.text+0x20): undefined reference to `main'
+collect2: error: ld returned 1 exit status
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % >....                                                                                                                                                
+            std::cerr << "[rank 0] Error: --mode must be 'pt2pt' or 'bcast'\n";
+            print_usage(rank);
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+        if (args.repeat < 1) args.repeat = 1;
+    }
+
+    int shared_tag = args.tag;
+    int shared_repeat = args.repeat;
+    MPI_Bcast(&mode_code,     1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&shared_tag,    1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&shared_repeat, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    if (mode_code == 1) {
+        // ===== Broadcast mode =====
+        std::string received = bcast_string(args.msg, 0, MPI_COMM_WORLD);
+        for (int r = 0; r < shared_repeat; ++r) {
+            std::cout << "[bcast] rank " << rank << "/" << world
+                      << " received: " << received << "\n";
+        }
+        std::cout.flush();
+    } else {
+        // ===== Point-to-point mode =====
+        if (rank == 0) {
+            const int len = static_cast<int>(args.msg.size());
+            for (int dest = 1; dest < world; ++dest) {
+                for (int r = 0; r < shared_repeat; ++r) {
+                    MPI_Send(&len, 1, MPI_INT, dest, shared_tag, MPI_COMM_WORLD);
+                    if (len > 0) {
+                        MPI_Send(args.msg.data(), len, MPI_CHAR, dest, shared_tag, MPI_COMM_WORLD);
+                    }
+                }
+            }
+            std::cout << "[pt2pt] rank 0/" << world
+                      << " sent message to ranks 1.." << (world - 1)
+                      << " tag=" << shared_tag
+                      << " repeat=" << shared_repeat << "\n";
+            std::cout.flush();
+        } else {
+            for (int r = 0; r < shared_repeat; ++r) {
+                int len = 0;
+                MPI_Recv(&len, 1, MPI_INT, 0, shared_tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                std::string msg;
+                msg.resize(static_cast<size_t>(len));
+                if (len > 0) {
+                    MPI_Recv(msg.data(), len, MPI_CHAR, 0, shared_tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                }
+                std::cout << "[pt2pt] rank " << rank << "/" << world
+                          << " received: " << msg << "\n";
+            }
+            std::cout.flush();
+        }
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (rank == 0) std::cout << "Done.\n";
+    MPI_Finalize();
+    return 0;
+}
+EOF'
+
+cdp@192.168.4.39's password: 
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "set -e; cd ~/hellompiv2; mpic++ -O2 -std=c++17 src/mpi_comm.cpp -o build/mpi_comm -Wall -Wextra -Wpedantic; file build/mpi_comm; ls -lh build/mpi_comm"
+
+cdp@192.168.4.39's password: 
+In file included from /usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/mpicxx.h:277,
+                 from /usr/lib/aarch64-linux-gnu/openmpi/include/mpi.h:2911,
+                 from src/mpi_comm.cpp:16:
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h: In member function ‘virtual void MPI::Op::Init(void (*)(const void*, void*, int, const MPI::Datatype&), bool)’:
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h:121:25: warning: cast between incompatible function types from ‘void (*)(void*, void*, int*, ompi_datatype_t**, void (*)(void*, void*, int*, ompi_datatype_t**))’ to ‘void (*)(void*, void*, int*, ompi_datatype_t**)’ [-Wcast-function-type]
+  121 |     (void)MPI_Op_create((MPI_User_function*) ompi_mpi_cxx_op_intercept,
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h:123:38: warning: cast between incompatible function types from ‘void (*)(const void*, void*, int, const MPI::Datatype&)’ to ‘void (*)(void*, void*, int*, ompi_datatype_t**)’ [-Wcast-function-type]
+  123 |     ompi_op_set_cxx_callback(mpi_op, (MPI_User_function*) func);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+src/mpi_comm.cpp: In function ‘{anonymous}::Args {anonymous}::parse_args(int, char**)’:
+src/mpi_comm.cpp:37:28: error: expected primary-expression before ‘=’ token
+   37 |         auto eq = tok.find(=);
+      |                            ^
+src/mpi_comm.cpp:37:29: error: expected primary-expression before ‘)’ token
+   37 |         auto eq = tok.find(=);
+      |                             ^
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "sed -i \"s/find(=)/find('=')/\" ~/hellompiv2/src/mpi_comm.cpp && \
+  sed -n '30,45p' ~/hellompiv2/src/mpi_comm.cpp"
+cdp@192.168.4.39's password: 
+};
+
+Args parse_args(int argc, char** argv) {
+    Args a;
+    for (int i = 1; i < argc; ++i) {
+        std::string tok(argv[i]);
+        if (tok == "--help" || tok == "-h") { a.help = true; continue; }
+        auto eq = tok.find('=');
+        if (eq == std::string::npos) continue;
+        std::string key = tok.substr(0, eq);
+        std::string val = tok.substr(eq + 1);
+        if (key == "--mode")   a.mode   = val;
+        if (key == "--msg")    a.msg    = val;
+        if (key == "--tag")    a.tag    = std::stoi(val);
+        if (key == "--repeat") a.repeat = std::stoi(val);
+    }
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "set -e; cd ~/hellompiv2; \
+  mpic++ -O2 -std=c++17 src/mpi_comm.cpp -o build/mpi_comm -Wall -Wextra -Wpedantic; \
+  file build/mpi_comm; ls -lh build/mpi_comm"
+cdp@192.168.4.39's password: 
+In file included from /usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/mpicxx.h:277,
+                 from /usr/lib/aarch64-linux-gnu/openmpi/include/mpi.h:2911,
+                 from src/mpi_comm.cpp:16:
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h: In member function ‘virtual void MPI::Op::Init(void (*)(const void*, void*, int, const MPI::Datatype&), bool)’:
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h:121:25: warning: cast between incompatible function types from ‘void (*)(void*, void*, int*, ompi_datatype_t**, void (*)(void*, void*, int*, ompi_datatype_t**))’ to ‘void (*)(void*, void*, int*, ompi_datatype_t**)’ [-Wcast-function-type]
+  121 |     (void)MPI_Op_create((MPI_User_function*) ompi_mpi_cxx_op_intercept,
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/lib/aarch64-linux-gnu/openmpi/include/openmpi/ompi/mpi/cxx/op_inln.h:123:38: warning: cast between incompatible function types from ‘void (*)(const void*, void*, int, const MPI::Datatype&)’ to ‘void (*)(void*, void*, int*, ompi_datatype_t**)’ [-Wcast-function-type]
+  123 |     ompi_op_set_cxx_callback(mpi_op, (MPI_User_function*) func);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+build/mpi_comm: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=c217c1f2b37f97665613072adae1c7e076e6a15d, for GNU/Linux 3.7.0, not stripped
+-rwxrwxr-x 1 cdp cdp 163K Sep 23 13:07 build/mpi_comm
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE2 "mkdir -p ~/hellompiv2/build"
+cdp@192.168.4.40's password: 
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % scp -3 cdp@$NODE1:~/hellompiv2/build/mpi_comm cdp@$NODE2:~/hellompiv2/build/mpi_comm
+
+cdp@192.168.4.40's password: 
+cdp@192.168.4.39's password: 
+mpi_comm                                                                                                                                                                     100%  162KB  28.3MB/s   00:00    
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE2 "ls -lh ~/hellompiv2/build/mpi_comm && file ~/hellompiv2/build/mpi_comm"
+cdp@192.168.4.40's password: 
+-rwxrwxr-x 1 cdp cdp 163K Sep 23 13:08 /home/cdp/hellompiv2/build/mpi_comm
+/home/cdp/hellompiv2/build/mpi_comm: ELF 64-bit LSB pie executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=c217c1f2b37f97665613072adae1c7e076e6a15d, for GNU/Linux 3.7.0, not stripped
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 "cat > ~/hellompiv2/hostfile <<EOF
+$NODE1 slots=2
+$NODE2 slots=2
+EOF
+cat ~/hellompiv2/hostfile"
+
+cdp@192.168.4.39's password: 
+192.168.4.39 slots=2
+192.168.4.40 slots=2
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 '
+  cd ~/hellompiv2
+  mpirun --hostfile hostfile --display-map -np 4 \
+    ./build/mpi_comm --mode=bcast --msg="Hello across VMs" --repeat=1
+'
+
+cdp@192.168.4.39's password: 
+ Data for JOB [16900,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 0 Bound: UNBOUND
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 1 Bound: UNBOUND
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 2 Bound: N/A
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 3 Bound: N/A
+
+ =============================================================
+ Data for JOB [16900,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 0 Bound: N/A
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 1 Bound: N/A
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 2 Bound: UNBOUND
+ 	Process OMPI jobid: [16900,1] App: 0 Process rank: 3 Bound: UNBOUND
+
+ =============================================================
+[bcast] rank 0/4 received: Hello across VMs
+Done.
+[bcast] rank 1/4 received: Hello across VMs
+[bcast] rank 2/4 received: Hello across VMs
+[bcast] rank 3/4 received: Hello across VMs
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 '
+  cd ~/hellompiv2
+  mpirun --hostfile hostfile -np 4 \
+    ./build/mpi_comm --mode=pt2pt --msg="PT2PT over two nodes" --tag=9 --repeat=2
+'
+
+cdp@192.168.4.39's password: 
+[pt2pt] rank 0/4 sent message to ranks 1..3 tag=9 repeat=2
+[pt2pt] rank 1/4 received: PT2PT over two nodes
+[pt2pt] rank 1/4 received: PT2PT over two nodes
+[pt2pt] rank 2/4 received: PT2PT over two nodes
+[pt2pt] rank 2/4 received: PT2PT over two nodes
+Done.
+[pt2pt] rank 3/4 received: PT2PT over two nodes
+[pt2pt] rank 3/4 received: PT2PT over two nodes
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % ssh cdp@$NODE1 '
+  cd ~/hellompiv2 && mkdir -p runs
+  mpirun --hostfile hostfile --display-map -np 4 \
+    ./build/mpi_comm --mode=bcast --msg="Hello across VMs" --repeat=1 | tee runs/a01_vm_bcast.txt
+  mpirun --hostfile hostfile -np 4 \
+    ./build/mpi_comm --mode=pt2pt --msg="PT2PT over two nodes" --tag=9 --repeat=2 | tee runs/a01_vm_pt2pt.txt
+'
+scp cdp@$NODE1:~/hellompiv2/runs/a01_vm_*.txt ~/Desktop/
+
+cdp@192.168.4.39's password: 
+ Data for JOB [17036,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 0 Bound: UNBOUND
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 1 Bound: UNBOUND
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 2 Bound: N/A
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 3 Bound: N/A
+
+ =============================================================
+ Data for JOB [17036,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 0 Bound: N/A
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 1 Bound: N/A
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 2 Bound: UNBOUND
+ 	Process OMPI jobid: [17036,1] App: 0 Process rank: 3 Bound: UNBOUND
+
+ =============================================================
+[bcast] rank 0/4 received: Hello across VMs
+[bcast] rank 1/4 received: Hello across VMs
+Done.
+[bcast] rank 2/4 received: Hello across VMs
+[bcast] rank 3/4 received: Hello across VMs
+[pt2pt] rank 0/4 sent message to ranks 1..3 tag=9 repeat=2
+Done.
+[pt2pt] rank 1/4 received: PT2PT over two nodes
+[pt2pt] rank 1/4 received: PT2PT over two nodes
+[pt2pt] rank 2/4 received: PT2PT over two nodes
+[pt2pt] rank 2/4 received: PT2PT over two nodes
+[pt2pt] rank 3/4 received: PT2PT over two nodes
+[pt2pt] rank 3/4 received: PT2PT over two nodes
+zsh: no matches found: cdp@192.168.4.39:~/hellompiv2/runs/a01_vm_*.txt
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % scp cdp@$NODE1:~/hellompiv2/runs/a01_vm_bcast.txt  ~/Desktop/
+scp cdp@$NODE1:~/hellompiv2/runs/a01_vm_pt2pt.txt ~/Desktop/
+
+cdp@192.168.4.39's password: 
+a01_vm_bcast.txt                                                                                                                                                             100% 1358     1.6MB/s   00:00    
+cdp@192.168.4.39's password: 
+a01_vm_pt2pt.txt                                                                                                                                                             100%  353   523.1KB/s   00:00    
+(base) lakishwijewardene@Lakishs-MacBook-Air hellompiv2 % 

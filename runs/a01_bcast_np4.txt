@@ -1,0 +1,9 @@
+[bcast] rank 0/4 received: Broadcast demo
+[bcast] rank 0/4 received: Broadcast demo
+[bcast] rank 2/4 received: Broadcast demo
+[bcast] rank 2/4 received: Broadcast demo
+Done.
+[bcast] rank 1/4 received: Broadcast demo
+[bcast] rank 1/4 received: Broadcast demo
+[bcast] rank 3/4 received: Broadcast demo
+[bcast] rank 3/4 received: Broadcast demo
