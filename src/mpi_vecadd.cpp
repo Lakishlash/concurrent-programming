@@ -1,4 +1,4 @@
-// SIT315 M3 Activity 02 — Distributed Vector Addition (no hardcoding; flag-driven)
+// SIT315 M3 Activity 02 — Distributed Vector Addition
 // Modes:
 //   --mode=scatter  : MPI_Scatterv + local add + MPI_Gatherv
 //   --mode=pt2pt    : manual MPI_Send / MPI_Recv distribution + collection

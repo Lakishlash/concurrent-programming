@@ -1,0 +1,35 @@
+ Data for JOB [17947,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 0 Bound: UNBOUND
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 1 Bound: UNBOUND
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 2 Bound: N/A
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 3 Bound: N/A
+
+ =============================================================
+ Data for JOB [17947,1] offset 0 Total slots allocated 4
+
+ ========================   JOB MAP   ========================
+
+ Data for node: node1	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 0 Bound: N/A
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 1 Bound: N/A
+
+ Data for node: 192.168.4.40	Num slots: 2	Max slots: 0	Num procs: 2
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 2 Bound: UNBOUND
+ 	Process OMPI jobid: [17947,1] App: 0 Process rank: 3 Bound: UNBOUND
+
+ =============================================================
+[bcast] rank 0/4 received: Hello across VMs
+[bcast] rank 0/4 received: Hello across VMs
+[bcast] rank 1/4 received: Hello across VMs
+[bcast] rank 1/4 received: Hello across VMs
+[bcast] rank 2/4 received: Hello across VMs
+[bcast] rank 2/4 received: Hello across VMs
+[bcast] rank 3/4 received: Hello across VMs
+[bcast] rank 3/4 received: Hello across VMs
+Done.
